@@ -23,8 +23,9 @@
 
 // 创建capture dom
 function createCaptureHTML() {
-  const captDiv = document.createElement("div");
-  captDiv.setAttribute('id','capture-div');
+  const captDiv = document.createElement("div")
+  captDiv.setAttribute('id', 'capture-div');
+
   const inDiv = `
     <div class="capt-point capt-top"></div>
     <div class="capt-point capt-left"></div>
@@ -34,19 +35,24 @@ function createCaptureHTML() {
     <div class="capt-point capt-top-right"></div>
     <div class="capt-point capt-bottom-left"></div>
     <div class="capt-point capt-bottom-right"></div>
+    <img id="capt-img" style="display:none;">
     <div class="capt-ctrl">
-      <button id="capt-delete" type="button">删除</button>
-      <button id="capt-comfirm" type="button">确定</button>
+      <button id="capt-dele" type="button">删除</button>
+      <button id="capt-comf" type="button">确定</button>
     </div>
   `
   //需要调整尺寸的div
   // let container = document.getElementById('container')
-  // 鼠标按下事件
-  document.querySelector('body').addEventListener('mousedown', down)
   // 鼠标松开事件
   captDiv.addEventListener('mouseup', up)
+  // 鼠标按下事件
+  document.querySelector('body').addEventListener('mousedown', down)
   // body监听移动事件
   document.querySelector('body').addEventListener('mousemove', move)
+  captDiv.addEventListener('click', function () {
+    document.querySelector('#capt-dele').addEventListener('click', getSreenshot)
+    document.querySelector('#capt-comf').addEventListener('click', getSreenshot)
+  })
 
   // 是否开启尺寸修改
   let resizeable = false
@@ -150,15 +156,15 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       createCaptureHTML();
       break;
     case "saveCaptureImg":
-      let img = document.getElementById("capture-div");
-      // let screenshot = document.getElementById("screenshot");
-      console.log(dataUrl);
+      let capt = document.getElementById("capture-div");
+      let img = document.getElementById("capt-img");
+      // console.log(request.dataUrl);
       img.src = request.dataUrl;
       img.style.display = "block";
-      img.style.left = img.offsetLeft + "px";
-      img.style.top = img.offsetTop + "px";
-      img.style.width = img.offsetWidth + "px";
-      img.style.height = img.offsetHeight + "px";
+      img.style.left = capt.offsetLeft + "px";
+      img.style.top = capt.offsetTop + "px";
+      img.style.width = capt.offsetWidth + "px";
+      img.style.height = capt.offsetHeight + "px";
       break;
     default:
       break;
@@ -175,3 +181,12 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   // 消息回传
   sendResponse({ number: request.number });
 });
+
+function getSreenshot() {
+  chrome.runtime.sendMessage({ action: "screenshot" }, (response) => {
+    console.log(
+      `content script -> background infos have been received. number: ${response}`
+    );
+    
+  });
+}
