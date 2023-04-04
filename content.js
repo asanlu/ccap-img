@@ -35,7 +35,7 @@ function createCaptureHTML() {
     <div class="capt-point capt-top-right"></div>
     <div class="capt-point capt-bottom-left"></div>
     <div class="capt-point capt-bottom-right"></div>
-    <img id="capt-img" style="display:none;">
+    <img id="capt-img">
     <div class="capt-ctrl">
       <button id="capt-dele" type="button">删除</button>
       <button id="capt-comf" type="button">确定</button>
@@ -157,14 +157,30 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       break;
     case "saveCaptureImg":
       let capt = document.getElementById("capture-div");
-      let img = document.getElementById("capt-img");
-      // console.log(request.dataUrl);
+      let realimg = document.getElementById("capt-img");
+      // // console.log(request.dataUrl);
+      // img.src = request.dataUrl;
+      realimg.style.display = "block";
+      // img.style.left = capt.offsetLeft + "px";
+      // img.style.top = capt.offsetTop + "px";
+      // img.style.width = capt.offsetWidth + "px";
+      // img.style.height = capt.offsetHeight + "px";
+
+      var canvas = document.createElement('canvas');
+      var canvasContext = canvas.getContext('2d');
+      var img = new Image();
+      img.onload = function () {
+        width = capt.offsetWidth;
+        height = capt.offsetHeight
+        canvas.width = width;
+        canvas.height = height;
+        console.log(capt.offsetLeft, capt.offsetTop, width, height,);
+        canvasContext.drawImage(img, capt.offsetLeft, capt.offsetTop, width, height, 0, 0, width, height);
+        // 在页面中插入裁剪后的图像
+        var croppedImage = canvas.toDataURL('image/png');
+        realimg.src = croppedImage;
+      };
       img.src = request.dataUrl;
-      img.style.display = "block";
-      img.style.left = capt.offsetLeft + "px";
-      img.style.top = capt.offsetTop + "px";
-      img.style.width = capt.offsetWidth + "px";
-      img.style.height = capt.offsetHeight + "px";
       break;
     default:
       break;
@@ -187,6 +203,6 @@ function getSreenshot() {
     console.log(
       `content script -> background infos have been received. number: ${response}`
     );
-    
+
   });
 }

@@ -8,7 +8,7 @@ html {
 #capture-div {
   width: 500px;
   height: 200px;
-  border: #00cdcd 2px solid;
+  border: #00cdcd 2px dashed;
   box-sizing: border-box;
   position: absolute;
   left: 40px;
@@ -81,10 +81,7 @@ html {
   text-align: center;
   background-color: rgba(255,255,255,.5);
 } 
-
-.drag-wrap{
-  /* width: 500px; */
-  height: 100%;
-  border: dashed 2px #000;
-  cursor: move;
+#capt-img{
+  display:none;
+  pointer-events: none;
 }
