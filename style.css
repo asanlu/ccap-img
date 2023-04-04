@@ -1,0 +1,90 @@
+body,
+html {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+#capture-div {
+  width: 500px;
+  height: 200px;
+  border: #00cdcd 2px solid;
+  box-sizing: border-box;
+  position: absolute;
+  left: 40px;
+  top: 40px;
+  cursor: move;
+}
+
+.capt-point{
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 2px;
+  border: #08253b 1px solid;
+  position: absolute;
+}
+
+.capt-point.capt-top {
+  top: -2px;
+  left: 50%;
+}
+
+.capt-point.capt-bottom {
+  bottom: -2px;
+  left: 50%;
+}
+
+.capt-point.capt-left {
+  left: -2px;
+  top: 50%;
+}
+
+.capt-point.capt-right {
+  right: -2px;
+  top: 50%;
+}
+
+.capt-point.capt-top-left {
+  top: -2px;
+  left: -2px;
+}
+
+.capt-point.capt-bottom-left {
+  bottom: -2px;
+  left: -2px;
+}
+
+.capt-point.capt-top-right {
+  top: -2px;
+  right: -2px;
+}
+
+.capt-point.capt-bottom-right {
+  bottom: -2px;
+  right: -2px;
+}
+
+.capt-ctrl {
+  position: absolute;
+  right: 0;
+  bottom: -26px;
+}
+
+.capture-div{
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  width: 500px;
+  height: 200px;
+  text-align: center;
+  background-color: rgba(255,255,255,.5);
+} 
+
+.drag-wrap{
+  /* width: 500px; */
+  height: 100%;
+  border: dashed 2px #000;
+  cursor: move;
+}
