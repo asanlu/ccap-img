@@ -27,17 +27,21 @@ function createCaptureHTML() {
   captDiv.setAttribute('id', 'capture-div');
 
   const inDiv = `
-    <div class="capt-point capt-top"></div>
-    <div class="capt-point capt-left"></div>
-    <div class="capt-point capt-right"></div>
-    <div class="capt-point capt-bottom"></div>
-    <div class="capt-point capt-top-left"></div>
-    <div class="capt-point capt-top-right"></div>
-    <div class="capt-point capt-bottom-left"></div>
-    <div class="capt-point capt-bottom-right"></div>
-    <img id="capt-img">
+    <div id="capture-wrap" >
+      <div class="capt-point capt-top"></div>
+      <div class="capt-point capt-left"></div>
+      <div class="capt-point capt-right"></div>
+      <div class="capt-point capt-bottom"></div>
+      <div class="capt-point capt-top-left"></div>
+      <div class="capt-point capt-top-right"></div>
+      <div class="capt-point capt-bottom-left"></div>
+      <div class="capt-point capt-bottom-right"></div>
+      <img id="capt-img">
+    </div>
     <div class="capt-ctrl">
+      <button id="capt-close" type="button">关闭</button>
       <button id="capt-dele" type="button">删除</button>
+      <button id="capt-down" type="button">保存</button>
       <button id="capt-comf" type="button">确定</button>
     </div>
   `
@@ -49,10 +53,6 @@ function createCaptureHTML() {
   document.querySelector('body').addEventListener('mousedown', down)
   // body监听移动事件
   document.querySelector('body').addEventListener('mousemove', move)
-  captDiv.addEventListener('click', function () {
-    document.querySelector('#capt-dele').addEventListener('click', getSreenshot)
-    document.querySelector('#capt-comf').addEventListener('click', getSreenshot)
-  })
 
   // 是否开启尺寸修改
   let resizeable = false
@@ -75,7 +75,7 @@ function createCaptureHTML() {
 
   // 鼠标按下时开启尺寸修改
   function down(e) {
-    // console.log(e.target)
+    console.log(e.target)
     let d = getDirection(e)
     // 当位置为四个边和四个角时才开启尺寸修改
     // if (d !== '') {
@@ -86,7 +86,7 @@ function createCaptureHTML() {
       clientX = e.clientX
       clientY = e.clientY
     }
-    if (e.target.id.indexOf('capture-div') >= 0) {
+    if (e.target.id.indexOf('capture-wrap') >= 0) {
       isDragging = true;
       offsetX = e.clientX - captDiv.offsetLeft;
       offsetY = e.clientY - captDiv.offsetTop;
@@ -145,7 +145,33 @@ function createCaptureHTML() {
   }
 
   captDiv.innerHTML = inDiv;
+  if(document.getElementById("capture-div")) return;
   document.body.appendChild(captDiv);
+  document.querySelector('#capt-close').addEventListener('click', function(){
+    let capt = document.getElementById("capture-div");
+    capt.remove();
+    capt = null;
+  })
+  document.querySelector('#capt-dele').addEventListener('click', deleteSreenshot)
+  document.querySelector('#capt-down').addEventListener('click', downSreenshot)
+  document.querySelector('#capt-comf').addEventListener('click', getSreenshot)
+  
+  function getSreenshot() {
+    chrome.runtime.sendMessage({ action: "screenshot" }, (response) => {
+      console.log(`response: ${response}`);
+    });
+  }
+  function deleteSreenshot() {
+    let realimg = document.getElementById("capt-img");
+    realimg.style.display = "none";
+    // chrome.runtime.sendMessage({ action: "deleteScreenshot" });
+  }
+  function downSreenshot() {
+    let realimgUrl = document.getElementById("capt-img");
+    chrome.runtime.sendMessage({ action: "downScreenshot", url: realimgUrl}, (response) => {
+      console.log(`response: ${response}`);
+    });
+  }
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -158,24 +184,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     case "saveCaptureImg":
       let capt = document.getElementById("capture-div");
       let realimg = document.getElementById("capt-img");
-      // // console.log(request.dataUrl);
-      // img.src = request.dataUrl;
       realimg.style.display = "block";
-      // img.style.left = capt.offsetLeft + "px";
-      // img.style.top = capt.offsetTop + "px";
-      // img.style.width = capt.offsetWidth + "px";
-      // img.style.height = capt.offsetHeight + "px";
-
       var canvas = document.createElement('canvas');
       var canvasContext = canvas.getContext('2d');
       var img = new Image();
       img.onload = function () {
-        width = capt.offsetWidth;
-        height = capt.offsetHeight
+        width = capt.offsetWidth - 4;
+        height = capt.offsetHeight - 4;
         canvas.width = width;
         canvas.height = height;
         console.log(capt.offsetLeft, capt.offsetTop, width, height,);
-        canvasContext.drawImage(img, capt.offsetLeft, capt.offsetTop, width, height, 0, 0, width, height);
+        canvasContext.drawImage(img, capt.offsetLeft + 2, capt.offsetTop + 2, width, height, 0, 0, width, height);
         // 在页面中插入裁剪后的图像
         var croppedImage = canvas.toDataURL('image/png');
         realimg.src = croppedImage;
@@ -197,12 +216,3 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   // 消息回传
   sendResponse({ number: request.number });
 });
-
-function getSreenshot() {
-  chrome.runtime.sendMessage({ action: "screenshot" }, (response) => {
-    console.log(
-      `content script -> background infos have been received. number: ${response}`
-    );
-
-  });
-}

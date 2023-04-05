@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "Screenshot Extension",
+    "name": "内容阅读助手",
     "version": "1.0",
-    "description": "Take screenshots and display them in a floating window",
+    "description": "浏览长的网页内容时，需要对比或反复观看，通过截图定位使用。亦可当截图工具。",
     "icons": {
       "16": "icons/icon16.png",
       "32": "icons/icon16.png",
@@ -13,7 +13,7 @@
       "activeTab",
       "tabs",
       "storage",
-      "contextMenus",
+      "downloads",
       "declarativeContent"
     ],
     "host_permissions": ["http://*/*", "https://*/*"],

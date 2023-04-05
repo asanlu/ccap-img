@@ -8,21 +8,29 @@ html {
 #capture-div {
   width: 500px;
   height: 200px;
-  border: #00cdcd 2px dashed;
+  border: 2px solid rgba(0, 0, 0, 0.6);
   box-sizing: border-box;
-  position: absolute;
-  left: 40px;
-  top: 40px;
+  position: fixed;
+  left: 16%;
+  top: 10%;
   cursor: move;
+  z-index: 999;
 }
-
 .capt-point{
-  display: block;
+  display: none;
   width: 4px;
   height: 4px;
   border-radius: 2px;
   border: #08253b 1px solid;
   position: absolute;
+}
+
+#capture-wrap{
+  width: 100%;
+  height: 100%;
+}
+#capture-wrap:hover .capt-point{
+  display: block;
 }
 
 .capt-point.capt-top {

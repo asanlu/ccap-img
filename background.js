@@ -16,7 +16,15 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       });
     });
   }
+  if(request.action === 'downScreenshot'){
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      // 截取屏幕截图并指定截图区域
+      chrome.tabs.captureVisibleTab(null, { format: "png" }, function (dataUrl) {
+        chrome.downloads.download({url: dataUrl, filename: `图片-${Date.now()}` });
+      });
+    });
+  }
   // 消息回传
-  // sendResponse({ number: request.number });
+  sendResponse({ status: true });
 });
 
